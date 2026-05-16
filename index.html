@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Anniversary 💕 | Madhusudan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Dancing+Script:wght@400;700&display=swap');
+        
+        body { font-family: 'Playfair Display', serif; }
+        .script-font { font-family: 'Dancing Script', cursive; }
+        
+        .page { display: none; }
+        .page.active { display: block; }
+        
+        .hero-bg {
+            background: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.75)), 
+                        url('https://picsum.photos/id/1015/2000/1200') center/cover no-repeat;
+            min-height: 100vh;
+        }
+        canvas { position: fixed; top: 0; left: 0; z-index: 999; pointer-events: none; }
+    </style>
+</head>
+<body class="bg-pink-50 text-gray-800">
+
+    <canvas id="confetti"></canvas>
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="font-bold text-2xl text-pink-600 flex items-center gap-2">
+                    <i class="fa-solid fa-heart"></i> Anniversary
+                </div>
+                <div class="flex gap-6 text-sm font-medium">
+                    <a href="#" onclick="showPage(1)" class="nav-link active" id="nav1">Home</a>
+                    <a href="#" onclick="showPage(2)" class="nav-link" id="nav2">Timeline</a>
+                    <a href="#" onclick="showPage(3)" class="nav-link" id="nav3">Gallery</a>
+                    <a href="#" onclick="showPage(4)" class="nav-link" id="nav4">Video</a>
+                    <a href="#" onclick="showPage(5)" class="nav-link" id="nav5">Music & Love</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ==================== PAGE 1 ==================== -->
+    <div id="page1" class="page active">
+        <section class="hero-bg flex items-center justify-center text-white text-center px-6 py-20">
+            <div class="max-w-4xl">
+                <h1 class="text-5xl md:text-7xl font-bold mb-4">Happy Anniversary</h1>
+                <div class="script-font text-6xl md:text-8xl text-pink-300 mb-8">
+                    Madhusudan &amp; [Partner's Name]
+                </div>
+                <p class="text-2xl mb-12">Celebrating our beautiful love story</p>
+                <button onclick="triggerConfetti()" class="bg-white text-pink-600 px-10 py-5 rounded-3xl text-xl font-semibold">Spread More Love</button>
+            </div>
+        </section>
+    </div>
+
+    <!-- ==================== PAGE 2 ==================== -->
+    <div id="page2" class="page py-20 bg-white">
+        <div class="max-w-5xl mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center mb-12 text-pink-600">Our Love Timeline</h2>
+            <!-- Add your timeline here -->
+        </div>
+    </div>
+
+    <!-- ==================== PAGE 3 ==================== -->
+    <div id="page3" class="page py-20 bg-pink-50">
+        <div class="max-w-6xl mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center mb-12 text-pink-600">Our Beautiful Moments</h2>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
+                <!-- Add your photos -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== PAGE 4 - VIDEO FROM GITHUB ==================== -->
+    <div id="page4" class="page py-20 bg-white">
+        <div class="max-w-5xl mx-auto px-6 text-center">
+            <h2 class="text-4xl font-bold mb-8 text-pink-600">Our Memory Video</h2>
+            <div class="aspect-video bg-black rounded-3xl overflow-hidden shadow-2xl">
+                <video id="memoryVideo" class="w-full h-full" controls>
+                    <source id="videoSource" src="" type="video/mp4">
+                </video>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== PAGE 5 - MUSIC FROM GITHUB ==================== -->
+    <div id="page5" class="page py-20 bg-gradient-to-br from-pink-100 to-rose-100">
+        <div class="max-w-4xl mx-auto px-6 text-center">
+            <h2 class="text-4xl font-bold mb-8 text-pink-600">Our Special Song</h2>
+            
+            <button onclick="toggleMusic()" id="musicBtn"
+                    class="bg-pink-600 text-white px-10 py-6 rounded-3xl text-xl flex items-center gap-3 mx-auto">
+                <i class="fa-solid fa-music"></i>
+                <span id="musicStatus">Play Music</span>
+            </button>
+
+            <div class="mt-16">
+                <p class="italic text-xl">"Thank you for every moment with you."</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Background Music -->
+    <audio id="bgMusic" loop>
+        <source id="musicSource" src="" type="audio/mpeg">
+    </audio>
+
+    <script>
+        // Confetti
+        let canvas = document.getElementById('confetti');
+        let ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height - canvas.height;
+                this.size = Math.random() * 14 + 8;
+                this.speed = Math.random() * 5 + 3;
+                this.angle = Math.random() * 360;
+                this.color = ['#ec4899', '#f43f5e', '#fb7185', '#fda4af', '#ffffff'][Math.floor(Math.random()*5)];
+                this.rotationSpeed = Math.random() * 0.15 + 0.05;
+            }
+            update() {
+                this.y += this.speed;
+                this.angle += this.rotationSpeed;
+            }
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.angle);
+                ctx.fillStyle = this.color;
+                ctx.font = `${this.size}px Arial`;
+                ctx.fillText('♥', 0, 0);
+                ctx.restore();
+            }
+        }
+
+        function triggerConfetti() {
+            for (let i = 0; i < 80; i++) particles.push(new Particle());
+        }
+
+        function animateConfetti() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = particles.length - 1; i >= 0; i--) {
+                particles[i].update();
+                particles[i].draw();
+                if (particles[i].y > canvas.height) particles.splice(i, 1);
+            }
+            requestAnimationFrame(animateConfetti);
+        }
+
+        // Page Control
+        function showPage(n) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page' + n).classList.add('active');
+            
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            document.getElementById('nav' + n).classList.add('active');
+        }
+
+        // Music
+        let music = document.getElementById('bgMusic');
+        let isPlaying = false;
+
+        function toggleMusic() {
+            if (isPlaying) {
+                music.pause();
+                document.getElementById('musicStatus').textContent = 'Play Music';
+            } else {
+                music.play();
+                document.getElementById('musicStatus').textContent = 'Pause Music';
+            }
+            isPlaying = !isPlaying;
+        }
+
+        // ==================== CHANGE THESE TWO GITHUB LINKS ====================
+        window.onload = function() {
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+            animateConfetti();
+            triggerConfetti();
+
+            // === REPLACE THESE WITH YOUR GITHUB RAW LINKS ===
+            const videoUrl = "https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/your-video.mp4";
+            const musicUrl = "https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/your-song.mp3";
+
+            document.getElementById('videoSource').src = videoUrl;
+            document.getElementById('musicSource').src = musicUrl;
+        };
+    </script>
+</body>
+</html>
