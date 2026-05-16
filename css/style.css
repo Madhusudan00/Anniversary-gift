@@ -1,0 +1,17 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Dancing+Script:wght@400;700&display=swap');
+
+body { font-family: 'Playfair Display', serif; }
+.script-font { font-family: 'Dancing Script', cursive; }
+
+.page { display: none; }
+.page.active { display: block; }
+
+.hero-bg {
+    background: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.75)),
+                url('https://picsum.photos/id/1015/2000/1200') center/cover no-repeat;
+    min-height: 100vh;
+}
+
+canvas { position: fixed; top: 0; left: 0; z-index: 999; pointer-events: none; }
+.nav-link { transition: all 0.3s; }
+.nav-link.active { color: #ec4899; border-bottom: 3px solid #ec4899; }
