@@ -51,8 +51,9 @@ function showPage(n) {
     document.getElementById(`nav${n}`).classList.add('active');
 }
 
+// ==================== MUSIC & VIDEO CONTROL ====================
 const bgMusic = document.getElementById('bgMusic');
-let isPlaying = false;
+let isPlaying = true;
 
 function toggleMusic() {
     if (isPlaying) {
@@ -65,14 +66,44 @@ function toggleMusic() {
     isPlaying = !isPlaying;
 }
 
+// Auto pause music when video plays
+function setupVideoMusicControl() {
+    const allVideos = document.querySelectorAll('video');
+    
+    allVideos.forEach(video => {
+        // When video starts playing → pause music
+        video.addEventListener('play', () => {
+            if (!bgMusic.paused) {
+                bgMusic.pause();
+            }
+        });
+
+        // When video is paused or ended → resume music
+        video.addEventListener('pause', () => {
+            if (isPlaying && bgMusic.paused) {
+                bgMusic.play().catch(() => {});
+            }
+        });
+
+        video.addEventListener('ended', () => {
+            if (isPlaying && bgMusic.paused) {
+                bgMusic.play().catch(() => {});
+            }
+        });
+    });
+}
+
 window.onload = () => {
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
     animate();
     triggerConfetti(80);
 
-    // Background Music
+    // Set Background Music
     bgMusic.src = "https://raw.githubusercontent.com/Madhusudan00/Anniversary-gift/main/bg.mp3";
     bgMusic.volume = 0.7;
     bgMusic.play().catch(() => {});
+
+    // Setup video-music interaction
+    setupVideoMusicControl();
 };
